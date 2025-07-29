@@ -31,6 +31,7 @@ class Settings {
   // Session parameters.
   bool session_timers = true;
   SipMethod session_timers_refresh_method = SipMethod.UPDATE;
+  bool sessionTimersForceRefresher = false;
   int no_answer_timeout = 60;
 
   // Registration parameters.
@@ -149,7 +150,9 @@ class Checks {
     'contact_uri': (Settings src, Settings? dst) {
       dynamic contact_uri = src.contact_uri;
       if (contact_uri == null) return;
-      if (contact_uri is String) {
+      if (contact_uri is URI) {
+        dst!.contact_uri = contact_uri;
+      } else if (contact_uri is String) {
         dynamic uri = Grammar.parse(contact_uri, 'SIP_URI');
         if (uri != -1) {
           dst!.contact_uri = uri;
@@ -190,6 +193,10 @@ class Checks {
       if (method == SipMethod.INVITE || method == SipMethod.UPDATE) {
         dst!.session_timers_refresh_method = method;
       }
+    },
+    'session_timers_force_refresher': (Settings src, Settings? dst) {
+      bool sessionTimersForceRefresher = src.sessionTimersForceRefresher;
+      dst!.sessionTimersForceRefresher = sessionTimersForceRefresher;
     },
     'password': (Settings src, Settings? dst) {
       String? password = src.password;

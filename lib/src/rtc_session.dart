@@ -72,7 +72,7 @@ class RTCSession extends EventManager implements Owner {
         DartSIP_C.SESSION_EXPIRES,
         null,
         false,
-        false,
+        _ua.configuration.sessionTimersForceRefresher,
         null);
 
     receiveRequest = _receiveRequest;
@@ -335,6 +335,12 @@ class RTCSession extends EventManager implements Owner {
     extraHeaders.add('Content-Type: application/sdp');
     if (_sessionTimers.enabled) {
       extraHeaders.add('Session-Expires: ${_sessionTimers.defaultExpires}');
+    }
+
+    // If the call_id is provided, pass it along so the request uses it instead of generating one.
+    String? callId = options['call_id'];
+    if (callId != null) {
+      requestParams['call_id'] = callId;
     }
 
     _request =
@@ -3243,7 +3249,8 @@ class RTCSession extends EventManager implements Owner {
     responseExtraHeaders.add(
         'Session-Expires: ${_sessionTimers.currentExpires};refresher=$session_expires_refresher');
 
-    _sessionTimers.refresher = session_expires_refresher == 'uas';
+    _sessionTimers.refresher = _ua.configuration.sessionTimersForceRefresher ||
+        session_expires_refresher == 'uas';
     _runSessionTimer();
   }
 
@@ -3268,7 +3275,8 @@ class RTCSession extends EventManager implements Owner {
       session_expires_refresher = 'uac';
     }
 
-    _sessionTimers.refresher = session_expires_refresher == 'uac';
+    _sessionTimers.refresher = _ua.configuration.sessionTimersForceRefresher ||
+        session_expires_refresher == 'uac';
     _runSessionTimer();
   }
 
