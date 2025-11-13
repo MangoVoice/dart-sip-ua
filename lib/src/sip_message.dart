@@ -452,6 +452,24 @@ class IncomingMessage {
       return header['parsed'];
     }
 
+    // For headers that contain NameAddr (To, From, Contact, etc.),
+    // try manual parsing first to handle numeric-starting domains
+    String normalizedName = name.replaceAll('-', '_').toLowerCase();
+    if (normalizedName == 'to' || normalizedName == 'from' ||
+        normalizedName == 'contact' || normalizedName == 'route' ||
+        normalizedName == 'record_route' || normalizedName == 'reply_to' ||
+        normalizedName == 'refer_to' || normalizedName == 'referred_by') {
+      try {
+        dynamic parsed = NameAddrHeader.parse(value);
+        if (parsed != null) {
+          header['parsed'] = parsed;
+          return parsed;
+        }
+      } catch (e) {
+        // Fall through to grammar parser
+      }
+    }
+
     // Substitute '-' by '_' for grammar rule matching.
     dynamic parsed = Grammar.parse(value, name.replaceAll('-', '_'));
     if (parsed == -1) {

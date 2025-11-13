@@ -449,7 +449,7 @@ hosttoken       <- token_nodot {
 
 domainlabel     <- alphanum ( alphanum / "-" / "_" )*
 
-toplabel        <- ALPHA ( alphanum / "-" / "_" )*
+toplabel        <- alphanum ( alphanum / "-" / "_" )*
 
 IPv6reference   <- "[" IPv6address "]" {
                   data.host = _text();

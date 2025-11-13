@@ -228,10 +228,19 @@ class Checks {
     'registrar_server': (Settings src, Settings? dst) {
       dynamic registrar_server = src.registrar_server;
       if (registrar_server == null) return;
-      if (!registrar_server.contains(RegExp(r'^sip:', caseSensitive: false))) {
-        registrar_server = '${DartSIP_C.SIP}:$registrar_server';
+
+      String host = registrar_server;
+      String scheme = DartSIP_C.SIP;
+
+      // If it already has sip: prefix, extract the host
+      if (registrar_server.contains(RegExp(r'^sip:', caseSensitive: false))) {
+        // Extract host from sip:host format
+        host = registrar_server.replaceFirst(RegExp(r'^sip:', caseSensitive: false), '');
       }
-      dynamic parsed = URI.parse(registrar_server);
+
+      // Create URI object directly to bypass grammar parser issues with numeric-starting domains
+      dynamic parsed = URI(scheme, null, host, null, null, null);
+
       if (parsed == null || parsed.user != null) {
         return;
       } else {

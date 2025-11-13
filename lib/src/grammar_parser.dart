@@ -18022,7 +18022,7 @@ class GrammarParser {
         var ch0 = _ch, pos0 = _cursor, startPos0 = _startPos;
         _startPos = _cursor;
         while (true) {
-          $$ = _parse_ALPHA();
+          $$ = _parse_alphanum();
           if (!success) break;
           var seq = List<dynamic>.filled(2, null, growable: false)..[0] = $$;
           var testing0 = _testing;

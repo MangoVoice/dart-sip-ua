@@ -132,8 +132,7 @@ URI? normalizeTarget(dynamic target, [String? domain]) {
     // Build the complete SIP URI.
     target = '${DartSIP_C.SIP}:${escapeUser(targetUser)}@$targetDomain';
 
-    // Finally parse the resulting URI.
-    return URI.parse(target);
+    return URI(DartSIP_C.SIP, targetUser, targetDomain, null, null, null);
   } else {
     return null;
   }
