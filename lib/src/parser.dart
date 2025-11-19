@@ -133,7 +133,8 @@ dynamic _parseResponseLine(String line) {
   data.status_code = statusCode;
   data.reason_phrase = reasonPhrase;
 
-  logger.d('_parseResponseLine: ✅ MANUAL PARSER returning ParsedData - status_code=$statusCode, reason_phrase=$reasonPhrase');
+  logger.d(
+      '_parseResponseLine: ✅ MANUAL PARSER returning ParsedData - status_code=$statusCode, reason_phrase=$reasonPhrase');
 
   return data;
 }
@@ -164,7 +165,8 @@ IncomingMessage? parseMessage(String data, UA? ua) {
     parsed = Grammar.parse(firstLine, 'Request_Response');
     logger.d('parseMessage: ✅ GRAMMAR PARSER succeeded');
   } catch (FormatException) {
-    logger.d('parseMessage: ❌ GRAMMAR PARSER failed, trying manual parsers for numeric-starting domains');
+    logger.d(
+        'parseMessage: ❌ GRAMMAR PARSER failed, trying manual parsers for numeric-starting domains');
 
     // Fall back to manual parsing for numeric-starting domains
     if (firstLine.startsWith('SIP/2.0')) {
@@ -193,15 +195,18 @@ IncomingMessage? parseMessage(String data, UA? ua) {
     return null;
   } else if (parsed.status_code == null) {
     // This is a REQUEST
-    logger.d('parseMessage: Creating IncomingRequest - method_str=${parsed.method_str}, uri=${parsed.uri}');
+    logger.d(
+        'parseMessage: Creating IncomingRequest - method_str=${parsed.method_str}, uri=${parsed.uri}');
     IncomingRequest incomingRequest = IncomingRequest(ua);
     incomingRequest.method = parsed.method;
     incomingRequest.ruri = parsed.uri;
-    logger.d('parseMessage: IncomingRequest created - method=${incomingRequest.method}, ruri=${incomingRequest.ruri}');
+    logger.d(
+        'parseMessage: IncomingRequest created - method=${incomingRequest.method}, ruri=${incomingRequest.ruri}');
     message = incomingRequest;
   } else {
     // This is a RESPONSE
-    logger.d('parseMessage: Creating IncomingResponse - status_code=${parsed.status_code}, reason=${parsed.reason_phrase}');
+    logger.d(
+        'parseMessage: Creating IncomingResponse - status_code=${parsed.status_code}, reason=${parsed.reason_phrase}');
     message = IncomingResponse();
     message.status_code = parsed.status_code;
     message.reason_phrase = parsed.reason_phrase;
@@ -265,9 +270,11 @@ IncomingMessage? parseMessage(String data, UA? ua) {
 
   // Log final parsed message details for debugging
   if (message is IncomingRequest) {
-    logger.d('parseMessage: ✅ Final IncomingRequest - method=${message.method}, ruri=${message.ruri}, call_id=${message.call_id}, from=${message.from}, to=${message.to}');
+    logger.d(
+        'parseMessage: ✅ Final IncomingRequest - method=${message.method}, ruri=${message.ruri}, call_id=${message.call_id}, from=${message.from}, to=${message.to}');
   } else if (message is IncomingResponse) {
-    logger.d('parseMessage: ✅ Final IncomingResponse - status=${message.status_code}, reason=${message.reason_phrase}, call_id=${message.call_id}, method=${message.method}');
+    logger.d(
+        'parseMessage: ✅ Final IncomingResponse - status=${message.status_code}, reason=${message.reason_phrase}, call_id=${message.call_id}, method=${message.method}');
   }
 
   return message;

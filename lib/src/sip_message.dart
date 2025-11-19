@@ -455,10 +455,14 @@ class IncomingMessage {
     // For headers that contain NameAddr (To, From, Contact, etc.),
     // try manual parsing first to handle numeric-starting domains
     String normalizedName = name.replaceAll('-', '_').toLowerCase();
-    if (normalizedName == 'to' || normalizedName == 'from' ||
-        normalizedName == 'contact' || normalizedName == 'route' ||
-        normalizedName == 'record_route' || normalizedName == 'reply_to' ||
-        normalizedName == 'refer_to' || normalizedName == 'referred_by') {
+    if (normalizedName == 'to' ||
+        normalizedName == 'from' ||
+        normalizedName == 'contact' ||
+        normalizedName == 'route' ||
+        normalizedName == 'record_route' ||
+        normalizedName == 'reply_to' ||
+        normalizedName == 'refer_to' ||
+        normalizedName == 'referred_by') {
       try {
         dynamic parsed = NameAddrHeader.parse(value);
         if (parsed != null) {
