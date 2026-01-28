@@ -1633,13 +1633,24 @@ class RTCSession extends EventManager implements Owner {
   }
 
   void _iceRestart() async {
-    Map<String, dynamic> offerConstraints = _rtcOfferConstraints ??
-        <String, dynamic>{
-          'mandatory': <String, dynamic>{},
-          'optional': <dynamic>[],
-        };
+    logger.i('_iceRestart() called - attempting ICE restart with proper IceRestart flag');
+
+    // Create a copy of the constraints to avoid modifying the original
+    Map<String, dynamic> offerConstraints = Map<String, dynamic>.from(
+      _rtcOfferConstraints ?? <String, dynamic>{
+        'mandatory': <String, dynamic>{},
+        'optional': <dynamic>[],
+      }
+    );
+
+    // Ensure mandatory map exists
+    offerConstraints['mandatory'] ??= <String, dynamic>{};
     offerConstraints['mandatory']['IceRestart'] = true;
-    renegotiate(options: offerConstraints);
+
+    logger.i('_iceRestart() - IceRestart flag set in constraints: $offerConstraints');
+
+    final result = renegotiate(options: {'rtcOfferConstraints': offerConstraints});
+    logger.i('_iceRestart() - renegotiate returned: $result');
   }
 
   Future<void> _createRTCConnection(Map<String, dynamic> pcConfig,
@@ -2724,9 +2735,11 @@ class RTCSession extends EventManager implements Owner {
       }
 
       sendRequest(SipMethod.ACK);
+      logger.i('RE-INVITE: ACK sent');
 
       // If it is a 2XX retransmission exit now.
-      if (succeeded != null) {
+      if (succeeded) {
+        logger.i('RE-INVITE: Already succeeded, ignoring retransmission');
         return;
       }
 
@@ -3001,7 +3014,7 @@ class RTCSession extends EventManager implements Owner {
       _handleSessionTimersInIncomingResponse(response);
 
       // If it is a 2XX retransmission exit now.
-      if (succeeded != null) {
+      if (succeeded) {
         return;
       }
 
