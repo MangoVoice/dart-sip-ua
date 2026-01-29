@@ -49,7 +49,8 @@ class InviteClientTransaction extends TransactionBase {
     final success = transport!.send(request);
     logger.i('INVITE_TRANSACTION: transport.send() returned: $success');
     if (!success) {
-      logger.e('INVITE_TRANSACTION: transport.send() FAILED, calling onTransportError');
+      logger.e(
+          'INVITE_TRANSACTION: transport.send() FAILED, calling onTransportError');
       onTransportError();
     }
   }

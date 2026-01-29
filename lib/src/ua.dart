@@ -937,7 +937,8 @@ class UA extends EventManager {
 
     // Clear intentional reconnect flag - reconnection completed
     if (_isIntentionalReconnect) {
-      logger.i('onTransportConnect: Intentional reconnect completed - clearing flag');
+      logger.i(
+          'onTransportConnect: Intentional reconnect completed - clearing flag');
       _isIntentionalReconnect = false;
     }
 
@@ -958,7 +959,8 @@ class UA extends EventManager {
   void onTransportDisconnect(SIPUASocketInterface? socket, ErrorCause cause) {
     // DON'T terminate transactions - we want active calls to survive the reconnection.
     if (_isIntentionalReconnect) {
-      logger.w('onTransportDisconnect: INTENTIONAL RECONNECT - preserving active call transactions');
+      logger.w(
+          'onTransportDisconnect: INTENTIONAL RECONNECT - preserving active call transactions');
       emit(EventSocketDisconnected(socket: socket, cause: cause));
       // Still close registrator so we re-register after reconnection
       _registrator.onTransportClosed();
