@@ -2796,10 +2796,18 @@ class RTCSession extends EventManager implements Owner {
         onFailed(event.response);
       });
       handlers.on(EventOnTransportError(), (EventOnTransportError event) {
-        onTransportError(); // Do nothing because session ends.
+        if (_state == RtcSessionState.confirmed) {
+          logger.w('sendReinvite() transport error during confirmed session - not terminating (will retry on reconnect)');
+        } else {
+          onTransportError();
+        }
       });
       handlers.on(EventOnRequestTimeout(), (EventOnRequestTimeout event) {
-        onRequestTimeout(); // Do nothing because session ends.
+        if (_state == RtcSessionState.confirmed) {
+          logger.w('sendReinvite() request timeout during confirmed session - not terminating (will retry on reconnect)');
+        } else {
+          onRequestTimeout();
+        }
       });
       handlers.on(EventOnDialogError(), (EventOnDialogError event) {
         onDialogError(); // Do nothing because session ends.
@@ -3104,10 +3112,18 @@ class RTCSession extends EventManager implements Owner {
         onFailed(event.response);
       });
       handlers.on(EventOnTransportError(), (EventOnTransportError event) {
-        onTransportError(); // Do nothing because session ends.
+        if (_state == RtcSessionState.confirmed) {
+          logger.w('sendUpdate() transport error during confirmed session - not terminating (will retry on reconnect)');
+        } else {
+          onTransportError();
+        }
       });
       handlers.on(EventOnRequestTimeout(), (EventOnRequestTimeout event) {
-        onRequestTimeout(); // Do nothing because session ends.
+        if (_state == RtcSessionState.confirmed) {
+          logger.w('sendUpdate() request timeout during confirmed session - not terminating (will retry on reconnect)');
+        } else {
+          onRequestTimeout();
+        }
       });
       handlers.on(EventOnDialogError(), (EventOnDialogError event) {
         onDialogError(); // Do nothing because session ends.
