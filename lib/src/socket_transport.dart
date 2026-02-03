@@ -165,6 +165,22 @@ class SocketTransport {
     return status == TransportStatus.connecting;
   }
 
+  void forceReconnect() {
+    logger.w('forceReconnect() called - forcing WebSocket reconnection');
+
+    // Close the current socket without setting _close_requested
+    // This ensures reconnection logic will run
+    socket.disconnect();
+    status = TransportStatus.disconnected;
+
+    // Reset recovery attempts for fresh start
+    _recover_attempts = 0;
+
+    // Trigger reconnection immediately
+    logger.i('forceReconnect() - initiating immediate reconnection');
+    connect();
+  }
+
   /**
    * Private API.
    */

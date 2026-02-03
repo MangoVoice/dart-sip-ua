@@ -235,7 +235,8 @@ class Checks {
       // If it already has sip: prefix, extract the host
       if (registrar_server.contains(RegExp(r'^sip:', caseSensitive: false))) {
         // Extract host from sip:host format
-        host = registrar_server.replaceFirst(RegExp(r'^sip:', caseSensitive: false), '');
+        host = registrar_server.replaceFirst(
+            RegExp(r'^sip:', caseSensitive: false), '');
       }
 
       // Create URI object directly to bypass grammar parser issues with numeric-starting domains

@@ -45,7 +45,12 @@ class InviteClientTransaction extends TransactionBase {
       timer_B();
     }, Timers.TIMER_B);
 
-    if (!transport!.send(request)) {
+    logger.i('INVITE_TRANSACTION: Calling transport.send()');
+    final success = transport!.send(request);
+    logger.i('INVITE_TRANSACTION: transport.send() returned: $success');
+    if (!success) {
+      logger.e(
+          'INVITE_TRANSACTION: transport.send() FAILED, calling onTransportError');
       onTransportError();
     }
   }

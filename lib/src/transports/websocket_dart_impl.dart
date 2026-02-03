@@ -38,7 +38,10 @@ class SIPUAWebSocketImpl {
         onMessage?.call(data);
       }, onDone: () {
         onClose?.call(_socket!.closeCode, _socket!.closeReason);
-      });
+      }, onError: (error) {
+        logger.e('WebSocket onError: $error');
+        onClose?.call(500, error.toString());
+      }, cancelOnError: true);
     } catch (e) {
       onClose?.call(500, e.toString());
     }

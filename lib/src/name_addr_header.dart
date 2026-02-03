@@ -103,7 +103,8 @@ class NameAddrHeader {
     } catch (e) {
       // Manual URI parsing for numeric-starting domains
       if (uriString.startsWith('sip:') || uriString.startsWith('sips:')) {
-        RegExp uriRegex = RegExp(r'^(sips?):([^@]+)@(.+)$', caseSensitive: false);
+        RegExp uriRegex =
+            RegExp(r'^(sips?):([^@]+)@(.+)$', caseSensitive: false);
         Match? match = uriRegex.firstMatch(uriString);
         if (match != null) {
           String scheme = match.group(1)!;

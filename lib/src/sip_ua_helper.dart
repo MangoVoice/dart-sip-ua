@@ -84,6 +84,23 @@ class SIPUAHelper extends EventManager {
     _ua!.register();
   }
 
+  void forceReconnect() {
+    if (_ua != null) {
+      logger.w('SIPUAHelper forceReconnect() - forcing WebSocket reconnection');
+      _ua!.forceReconnect();
+    } else {
+      logger.w('forceReconnect called but UA not started');
+    }
+  }
+
+  void setRegisterExtraHeaders(List<String> headers) {
+    _settings.register_extra_headers = headers;
+    if (_ua != null) {
+      _ua!.registrator()?.setExtraHeaders(headers);
+    }
+    logger.d('Updated register extra headers: $headers');
+  }
+
   Future<bool> unregister([bool all = true]) async {
     if (_ua != null) {
       assert(registered, 'ERROR: you must call register first.');

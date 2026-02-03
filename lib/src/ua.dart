@@ -113,6 +113,8 @@ class UA extends EventManager {
   UAError? _error;
   late TransactionBag _transactions;
 
+  bool _isIntentionalReconnect = false;
+
 // Custom UA empty object for high level use.
   final Map<String, dynamic> _data = <String, dynamic>{};
 
@@ -228,6 +230,17 @@ class UA extends EventManager {
    */
   bool isConnected() {
     return _socketTransport!.isConnected();
+  }
+
+  /**
+   * Force reconnect the WebSocket connection.
+   * Use this when network changes and the WebSocket might be dead but still appears connected.
+   */
+  void forceReconnect() {
+    logger.w('UA forceReconnect() - forcing WebSocket reconnection');
+    // Set flag to preserve active call transactions during reconnection
+    _isIntentionalReconnect = true;
+    _socketTransport?.forceReconnect();
   }
 
   /**
@@ -921,6 +934,14 @@ class UA extends EventManager {
 // Transport connected event.
   void onTransportConnect(SocketTransport transport) {
     logger.d('Transport connected');
+
+    // Clear intentional reconnect flag - reconnection completed
+    if (_isIntentionalReconnect) {
+      logger.i(
+          'onTransportConnect: Intentional reconnect completed - clearing flag');
+      _isIntentionalReconnect = false;
+    }
+
     if (_status == UAStatus.userClosed) {
       return;
     }
@@ -936,6 +957,16 @@ class UA extends EventManager {
 
 // Transport disconnected event.
   void onTransportDisconnect(SIPUASocketInterface? socket, ErrorCause cause) {
+    // DON'T terminate transactions - we want active calls to survive the reconnection.
+    if (_isIntentionalReconnect) {
+      logger.w(
+          'onTransportDisconnect: INTENTIONAL RECONNECT - preserving active call transactions');
+      emit(EventSocketDisconnected(socket: socket, cause: cause));
+      // Still close registrator so we re-register after reconnection
+      _registrator.onTransportClosed();
+      return;
+    }
+
     // Run _onTransportError_ callback on every client transaction using _transport_.
     _transactions.removeAll().forEach((TransactionBase transaction) {
       transaction.onTransportError();
