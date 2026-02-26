@@ -33,6 +33,8 @@ class SIPUAWebSocketImpl {
             protocols: protocols, headers: webSocketSettings.extraHeaders);
       }
 
+      _socket!.pingInterval = const Duration(seconds: 30);
+
       onOpen?.call();
       _socket!.listen((dynamic data) {
         onMessage?.call(data);
@@ -117,6 +119,7 @@ class SIPUAWebSocketImpl {
         protocol: 'sip',
         serverSide: false,
       );
+      webSocket.pingInterval = const Duration(seconds: 30);
 
       return webSocket;
     } catch (e) {

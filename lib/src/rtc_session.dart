@@ -1449,6 +1449,12 @@ class RTCSession extends EventManager implements Owner {
    */
   void onTransportError() {
     logger.e('onTransportError()');
+    if (_state == RtcSessionState.confirmed ||
+        _state == RtcSessionState.waitingForAck) {
+      logger.w(
+          'onTransportError() during ${_state} session - NOT terminating (media flows via RTP, not WebSocket)');
+      return;
+    }
     if (_state != RtcSessionState.terminated) {
       terminate(<String, dynamic>{
         'status_code': 500,
