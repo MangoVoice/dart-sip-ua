@@ -70,6 +70,11 @@ class SIPUAHelper extends EventManager {
 
   RegistrationState get registerState => _registerState;
 
+  bool get isStopped {
+    if (_ua == null) return true;
+    return _ua!.status == UAStatus.userClosed;
+  }
+
   void stop() async {
     if (_ua != null) {
       _ua!.stop();
